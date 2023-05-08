@@ -68,7 +68,7 @@
                 try {
                     // Create first asynchronous get request using axios and change variables to depict readable data aka imperial units eg. fahrenheit
                     var location = 'brentwood, tn, usa';
-                    const response = await axios.get(`http://api.openweathermap.org/geo/1.0/direct?q=${location}&limit=1&appid=${this.apiKey}`);
+                    const response = await axios.get(`https://api.openweathermap.org/geo/1.0/direct?q=${location}&limit=1&appid=${this.apiKey}`);
                     const location_data = await response.data[0];
                     const lat = location_data.lat;  // Setting latitude and longitude properties
                     const lon = location_data.lon;  // for ease of location data
