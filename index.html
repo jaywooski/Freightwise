@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>FreightWise Programming Test</title>
+
+    <script>
+        'use strict';
+
+        /**
+         * Software Developer test.
+         *
+         * Doing research and making API calls are an important part of what we do at FreightWise.  This test will
+         * demonstrate your abilities to:
+         *
+         * - Make an API call
+         * - Research an API
+         * - Do basic DOM manipulation
+         * - Parse data
+         * - Handle errors
+         * - Be creative
+         *
+         * Feel free to ask any questions you may have.  Use a lot of comments, and explain why you are doing things.
+         * Don't spend more than 1-2 hours on it - we aren't expecting a finished product, but it should work and look
+         * nice.  Feel free to use any third party libraries, and if you do so, explain why you used them instead of
+         * built in browser APIs.
+         *
+         * Instructions:
+         **** - Use the axios (https://github.com/axios/axios) request library to make an API call to the OpenWeatherMap
+         *   API for Current Weather Data using this API key:  25e989bd41e3e24ce13173d8126e0fd6
+         *   We've already imported this library to get you started.
+         *** - Use either async/await or Promises.
+         *** - Get the weather for Brentwood, TN, and write it to the DOM using the `setResults` method below.  Be
+         *   creative and make it look nice.
+         * - Handle errors and use the `setError` method below to display the error.  Also make it look nice.
+         * - If you find any mistakes in the test, fix them, and leave a comment about what you fixed and why.
+         * - Make sure your code is readable and maintainable.
+         * - Use plenty of descriptive comments.
+         * - Make sure your code runs in the latest version of Google Chrome and Firefox (ES6 is allowed).
+         * - Make your code live (GitHub with GitHub pages works nice).
+         * - Send a link to your finished test to dev-team-jobs@freightwisellc.com.
+         *
+         * Feel free to add your own twist to it (completely optional).  Here are a few ideas:
+         * - Sign up for NewsAPI.org and get the Top Headlines and show them along with the weather.
+         * - Use the browser location API to get the user's current location, and show that location's weather.
+         * - Show a satellite map of the weather in Brentwood.
+         * - Request a user's phone number and send them an SMS with the weather.
+         */
+        class Test {
+            constructor() {
+                this.testResults = document.getElementsByClassName('test-results');
+                this.apiKey_orig = '25e989bd41e3e24ce13173d8126e0fd6'; //apiKey wasn't working for me.
+                this.apiKey = '0a84846407657b768312ba6857d70bad'; // my own apiKey for this project, will delete later.
+                this.results;
+                this.error;
+
+            }
+
+            async run() {
+                console.log(new Date().toISOString(), '[Test]', 'Running the test');
+
+
+
+                // TODO: Make the API call and handle the results
+                try {
+                    // Create first asynchronous get request using axios and change variables to depict readable data aka imperial units eg. fahrenheit
+                    var location = 'brentwood, tn, usa';
+                    const response = await axios.get(`http://api.openweathermap.org/geo/1.0/direct?q=${location}&limit=1&appid=${this.apiKey}`);
+                    const location_data = await response.data[0];
+                    const lat = location_data.lat;  // Setting latitude and longitude properties
+                    const lon = location_data.lon;  // for ease of location data
+                    const weather = await axios.get(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${this.apiKey}&units=imperial`);
+                    const weatherData = await weather.data;
+                    // console.log(location_data);
+                    // console.log(weatherData);
+                    /*Above console logs just for development use only*/
+                    this.setResults(weatherData, location_data);
+
+                } catch (error) {
+                    this.setError(error);
+                    console.error(error);
+                }
+
+            }
+
+            setError(message) {
+                // TODO: Format the error
+                const testResults = document.querySelector(".test-results");
+
+                const display = `
+                    <div class='error'>
+                        <h3>Uh oh!! Something went wrong. Try again..</h3>
+                        <p>Error: ${message}</p>
+                    </div>`;
+
+                testResults.innerHTML = display;
+            }
+
+            setResults(results, place) {
+                // TODO: Format the results
+                const testResults = document.querySelector(".test-results");
+
+                const display = `
+                    <div class='weather'>
+                        <h2>${results.name}, ${place.state}</h2>
+                        <div>
+                            <div class='top-div'>
+                                <img src="https://openweathermap.org/img/wn/${results.weather[0].icon}@2x.png" alt="${results.weather[0].description}">
+                            </div>
+                            <div class='bottom-div'>
+                                <p>${results.main.temp}°F</p>
+                                <p>hi: ${Math.floor(results.main.temp_max)}°F</p>
+                                <p>lo: ${Math.floor(results.main.temp_min)}°F</p>
+                                <p>humidity: ${results.main.humidity} % </p>
+                                <div>
+                                    <p>wind: ${Math.floor(results.wind.speed)} mph</p>
+                                    <p>gusts up to ${Math.floor(results.wind.speed)} mph</p>
+                                </div>
+    
+                            </div>
+                        </div>
+                    </div>`
+                    ;
+
+                testResults.innerHTML = display;
+                // this.testResults.innerHTML = (results || '').toString(); it was results at first instead of display. The 'this'
+                // keyword isn't necessary. I implemented a query selector instead to toggle the data to be displayed on screen in the 
+                // div with the class name 'test-results'.
+
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            height: 100vh;
+            width: 100vw;
+            margin: 0;
+            overflow: hidden;
+            /*Just to get rid of unneccessary scrolls of slightly excess margins*/
+        }
+
+        h2 {
+            width: 100%;
+            text-align: center;
+        }
+
+        .video-bckgrd {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            z-index: -1;
+        }
+
+        .video-bckgrd video {
+            /* adding video background of peaceful landscape for zen appeal*/
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            /* by setting both top and left values to 50% I get */
+            /* a specific viewpoint right in the center of the video*/
+            transform: translate(-50%, -50%);
+            min-width: 100%;
+            min-height: 100%;
+        }
+
+        .button-container {
+            text-align: center;
+            margin: auto;
+        }
+
+        .button-container>button {
+            margin: 0;
+            padding: 10px 18px;
+            color: white;
+            background-color: #008000;
+            border: none;
+            border-radius: 3px;
+            transition: all 200ms ease-in-out;
+            font-size: 14px;
+        }
+
+        .button-container>button:hover {
+            background-color: #00A000;
+        }
+
+        .error {
+            /*Same as weather but with red undertones*/
+            color: white;
+            background-color: rgba(255, 0, 0, 0.6);
+            border: 2px solid white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            width: 300px;
+            text-align: center;
+            align-items: center;
+            height: 300px;
+            border-radius: 20px;
+            padding: 5px;
+        }
+
+        .error p {
+            font-size: 10px;
+        }
+
+        .button-container>button:active {
+            background-color: #006000;
+        }
+
+        .top-div {
+            /* min-height: 250px; */
+            display: flex;
+            align-items: center;
+            padding: 0 15px;
+        }
+
+        .bottom-div {
+            padding: 0 15px;
+        }
+
+        .weather {
+            /* This creates kind of a T-Table with a header and a row underneath in 2 columns */
+            border: 2px solid white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            min-width: 400px;
+            max-width: 600px;
+            align-items: center;
+            max-height: 450px;
+            background-color: rgba(0, 0, 0, 0.68);
+            color: white;
+            border-radius: 20px;
+            padding: 5px;
+
+        }
+
+
+
+        .test-results {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+    </style>
+
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+</head>
+
+<body>
+
+    <!-- <div>
+        <form action="submit">
+            <input id="location" aria-placeholder="Enter a location: " placeholder="Enter a location: " type="text">
+        </form>
+        ***** commented out for scalability for future references ****
+    </div> -->
+
+    <!-- Video background for zen look appeal -->
+    <div class="video-bckgrd">
+        <video autoplay loop src="./jj-autumn-fall-aerial-12_2 (Original).mp4"></video>
+    </div>
+
+    <!-- Moved button to top of body for looks -->
+    <div class="button-container"></div>
+
+
+    <div class="test-results"></div>
+
+    <script>
+        'use strict';
+
+
+        /**
+         * Creates a button for kicking off the test and adds it to the DOM.
+         *
+         * @param {HTMLElement} context  the parent element to add the button to
+         * @param {Test}        test     the test to be executed
+         * @returns {HTMLElement} the button added to the test
+         */
+        function addButtonForTest(context, test) {
+            let testButton = document.createElement('button');
+
+            testButton.type = 'button';
+            testButton.innerText = 'Get the Nashville Weather';
+            testButton.onclick = () => test.run();
+
+            context.appendChild(testButton);
+
+            return testButton;
+        }
+
+
+        // Create the Test and add a button to the UI for running the test
+        const test = new Test();
+        const buttonContainer = document.getElementsByClassName('button-container')[0];
+
+        addButtonForTest(buttonContainer, test);
+    </script>
+    <!-- <script src="./app.js"></script> -->
+
+    <!-- create div to see results in test format -->
+    <!-- <div class="weather">
+        <div>
+            <img src=`https://openweathermap.org/img/wn${results.weather[0].icon}@2x.png` alt="weather logo">
+        </div>
+        <div>
+            <h2>Current weather</h2>
+            <p>${results.main.temp}</p>
+            <p>hi: ${Math.floor(results.main.temp_max)}</p>
+            <p>lo: ${Math.floor(results.main.temp_min)}</p>
+            <p>humidity: ${results.main.humidity} % </p>
+            <div>
+                <p>wind: ${Math.floor(results.wind.speed)} mph</p>
+                <p>gusts up to ${Math.floor(results.wind.speed)} mph</p>
+            </div>
+
+        </div>
+    </div> -->
+</body>
+
+</html>
